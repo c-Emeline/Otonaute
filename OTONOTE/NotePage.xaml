@@ -1,0 +1,17 @@
+﻿<Page x:Class="OTONOTE.NotePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:OTONOTE"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="NotePage">
+
+    <Grid>
+        <TextBox x:Name="noteTxtBox" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" Width="672" Height="287" Margin="0,47,0,0"/>
+        <Button x:Name="doneBtn" Content="Done" Click="saveOnClick" Background="#FF648171" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="20" Height="47" Width="92" FontFamily="Segoe UI Variable Display Semilight" BorderBrush="#00707070" Margin="0,364,0,0"/>
+        <Button x:Name="backBtn" Content="Back" Click="goBackOnClick" Background="Black" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="14" Height="32" Width="56" FontFamily="Segoe UI Variable Display Semilight" BorderBrush="#00707070"/>
+
+    </Grid>
+</Page>

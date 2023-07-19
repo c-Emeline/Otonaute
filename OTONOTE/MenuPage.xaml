@@ -1,0 +1,19 @@
+﻿<Page x:Class="OTONOTE.MenuPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:OTONOTE"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Menu Page">
+
+    <StackPanel Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Image x:Name="logo" Source="/src/img/otonaute_logo_v1.png" Height="200" Width="200"/>
+        <TextBlock x:Name="title" HorizontalAlignment="Center" TextWrapping="Wrap" Text="OTONOTE" VerticalAlignment="Center" FontSize="22" FontFamily="Segoe UI Variable Text Semibold" Foreground="Gainsboro"/>
+        <Grid Margin="0,60,0,0">
+            <Button x:Name="todayBtn" Content="Today" Click="todayBtn_Click" Background="#FF648171" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Height="47" Width="91" Margin="0,0,100,0" FontFamily="Segoe UI Variable Display Semilight" BorderBrush="#00707070"/>
+            <Button x:Name="otherBtn" Content="Other" Click="otherBtn_Click" BorderBrush="#00000000" Background="#FF648171" Foreground="White" VerticalAlignment="Center" FontSize="20" Height="47" Width="91" HorizontalAlignment="Right" Margin="200,0,0,0" FontFamily="Segoe UI Variable Display Semilight"/>
+        </Grid>
+    </StackPanel>
+</Page>

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>src\otonaute_logo_v1.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="src\img\otonaute_logo_v1.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="src\img\otonaute_logo_v1.png" />
+  </ItemGroup>
+
+</Project>
