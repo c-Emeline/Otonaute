@@ -27,6 +27,9 @@ namespace OTONOTE
         private const int COLUMNNBDATE = 6;
         private const int NOTEICONHEIGTH_PX = 60;
 
+        //store last button click to resuscribe mouseleave and enter event when event on another button called
+        private Button lastButtonClicked = null;
+
         public EveryNotesOverviewPage()
         {
             InitializeComponent();
@@ -35,113 +38,13 @@ namespace OTONOTE
 
             displayYearsButtons();
 
-            fillGrid(this.noteDirectory);
+            fillNotesGrid(this.noteDirectory);
         }
 
-        public void fillGrid(string directoryPath)
-        {
-            notesGrid.Children.Clear();
-            notesGrid.RowDefinitions.Clear();
-            notesGrid.ColumnDefinitions.Clear();
 
-            //construct columns
-            for (int i = 0; i<COLUMNNBNOTES; i++) notesGrid.ColumnDefinitions.Add(new ColumnDefinition());
+        //GOBACK
 
-            //create every note display and add it to the grid
-            try
-            {
-                var noteFiles = Directory.EnumerateFiles(directoryPath, "*.txt", SearchOption.AllDirectories);
-
-                int i = 0;
-                foreach (string currentNoteFile in noteFiles)
-                {
-                    string noteName = "Note of " + System.IO.Path.GetFileName(currentNoteFile).Substring(0, 8);
-
-                    //create the stack panel to display notes
-                    TextBlock noteNameTextBlock = new TextBlock();
-                    Image noteIcon = new Image();
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(@"C:/Users/ecreu/Documents/p_info/OTONOTE/OTONOTE/src/img/noteIcon.png");
-                    bitmap.EndInit();
-                    noteIcon.Source = bitmap;
-                    noteIcon.Height= NOTEICONHEIGTH_PX;
-
-                    StackPanel noteStackPanel = new StackPanel
-                    {
-                        Name = "noteStackPanel",
-                        Orientation = Orientation.Vertical
-                    };
-                    
-                    noteNameTextBlock.Text = noteName;
-                    noteStackPanel.Children.Add(noteIcon);
-                    noteStackPanel.Children.Add(noteNameTextBlock);
-
-                    noteStackPanel.MouseLeftButtonUp += new System.Windows.Input.MouseButtonEventHandler(goToNotePage);
-
-
-                    if (i%COLUMNNBNOTES == 0)
-                    {
-                        notesGrid.RowDefinitions.Add(new RowDefinition());
-                    }
-
-                    Grid.SetRow(noteStackPanel, (int) i/COLUMNNBNOTES);
-                    Grid.SetColumn(noteStackPanel, i%COLUMNNBNOTES);
-
-                    notesGrid.Children.Add(noteStackPanel);
-                    i++;
-
-                    //STYLE
-                    noteIcon.Margin= new Thickness(4);
-                    noteStackPanel.Margin = new Thickness(20);
-                    noteNameTextBlock.Foreground = Brushes.WhiteSmoke;
-
-                }
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.Message);
-            }
-
-        }
-
-        public void goToNotePage(object sender, RoutedEventArgs e )
-        {
-            string noteName = null;
-            var noteStackPanel = sender as StackPanel;
-
-            if ( noteStackPanel == null ) 
-            {
-                Console.WriteLine("Error : No stack panel for click event !");
-                return;
-            }
-
-            Console.WriteLine("Event sent on click on " + noteStackPanel.Name);
-
-            foreach (UIElement element in noteStackPanel.Children)
-            {
-                if (element is TextBlock)
-                {
-                    TextBlock textBlock = (TextBlock) element;
-                    noteName = textBlock.Text;
-                    break;
-                }
-            }
-
-            if (noteName == null)
-            {
-                Console.WriteLine("Error : Name of note file not found !");
-                return;
-            }
-
-            DateTime noteDate = DateTime.Parse(noteName.Substring(noteName.Length - 8, 2) + "/" + noteName.Substring(noteName.Length - 6, 2) + "/" + noteName.Substring(noteName.Length - 4, 4));
-
-            NotePage notePage = new NotePage(noteDate);
-            NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(notePage);
-        }
-
-        public void goBackOnClick(object sender, RoutedEventArgs e)
+        public void goBack_Click(object sender, RoutedEventArgs e)
         {
             if (this.NavigationService.CanGoBack)
             {
@@ -156,6 +59,10 @@ namespace OTONOTE
                 Console.WriteLine("No entries in back navigation history.");
             }
         }
+
+
+        //DATE SELECTION
+        //YEAR SELECTION
 
         private void displayYearsButtons()
         {
@@ -180,7 +87,7 @@ namespace OTONOTE
                     yearButton.Content = new DirectoryInfo(currentDirectory).Name;
                     yearButton.HorizontalAlignment = HorizontalAlignment.Left;
                     yearButton.Tag = currentDirectory;
-                    yearButton.Click+= yearButton_Click;
+                    yearButton.Click += yearButton_Click;
                     yearButton.MouseEnter += yearButton_MouseEnter;
                     yearButton.MouseLeave += yearButton_MouseLeave;
                     if (i % COLUMNNBNOTES == 0)
@@ -211,19 +118,22 @@ namespace OTONOTE
 
         private void yearButton_Click(object sender, RoutedEventArgs e)
         {
+
+            //resuscribe precedent button clicked if not null
+            if (lastButtonClicked != null)
+            {
+                lastButtonClicked.MouseEnter += yearButton_MouseEnter;
+                lastButtonClicked.MouseLeave += yearButton_MouseLeave;
+            }
+
             Button yearButton = (Button)sender;
-            yearButton.MouseEnter-= yearButton_MouseEnter;
-            yearButton.MouseLeave-= yearButton_MouseLeave;
+            yearButton.MouseEnter -= yearButton_MouseEnter;
+            yearButton.MouseLeave -= yearButton_MouseLeave;
             var yearDirectory = (String)((Button)sender).Tag;
 
+            lastButtonClicked = yearButton;
+
             displayMonthButtons(yearDirectory);
-        }
-
-        private void monthButton_Click(object sender, RoutedEventArgs e)
-        {
-            var monthDirectory = (String)((Button)sender).Tag;
-
-            fillGrid(monthDirectory);
         }
 
         private void yearButton_MouseEnter(object sender, RoutedEventArgs e)
@@ -238,6 +148,9 @@ namespace OTONOTE
             monthSelectionGrid.RowDefinitions.Clear();
             monthSelectionGrid.ColumnDefinitions.Clear();
         }
+
+
+        //MONTH SELECTION
 
         private void displayMonthButtons(string yearDirectoryPath)
         {
@@ -254,7 +167,7 @@ namespace OTONOTE
 
                 var monthDirectories = Directory.EnumerateDirectories(yearDirectoryPath);
 
-                fillGrid(yearDirectoryPath);
+                fillNotesGrid(yearDirectoryPath);
 
                 int i = 0;
                 foreach (string currentDirectory in monthDirectories)
@@ -290,5 +203,120 @@ namespace OTONOTE
                 Console.WriteLine(exception.Message);
             }
         }
+
+        private void monthButton_Click(object sender, RoutedEventArgs e)
+        {
+            var monthDirectory = (String)((Button)sender).Tag;
+
+            fillNotesGrid(monthDirectory);
+        }
+
+
+        //NOTE DISPLAY
+
+        public void fillNotesGrid(string directoryPath)
+        {
+            notesGrid.Children.Clear();
+            notesGrid.RowDefinitions.Clear();
+            notesGrid.ColumnDefinitions.Clear();
+
+            //construct columns
+            for (int i = 0; i < COLUMNNBNOTES; i++) notesGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+            //create every note display and add it to the grid
+            try
+            {
+                var noteFiles = Directory.EnumerateFiles(directoryPath, "*.txt", SearchOption.AllDirectories);
+
+                int i = 0;
+                foreach (string currentNoteFile in noteFiles)
+                {
+                    string noteName = "Note of " + System.IO.Path.GetFileName(currentNoteFile).Substring(0, 8);
+
+                    //create the stack panel to display notes
+                    TextBlock noteNameTextBlock = new TextBlock();
+                    Image noteIcon = new Image();
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(@"C:/Users/ecreu/Documents/p_info/OTONOTE/OTONOTE/src/img/noteIcon.png");
+                    bitmap.EndInit();
+                    noteIcon.Source = bitmap;
+                    noteIcon.Height = NOTEICONHEIGTH_PX;
+
+                    StackPanel noteStackPanel = new StackPanel
+                    {
+                        Name = "noteStackPanel",
+                        Orientation = Orientation.Vertical
+                    };
+
+                    noteNameTextBlock.Text = noteName;
+                    noteStackPanel.Children.Add(noteIcon);
+                    noteStackPanel.Children.Add(noteNameTextBlock);
+
+                    noteStackPanel.MouseLeftButtonUp += new System.Windows.Input.MouseButtonEventHandler(noteView_Click);
+
+
+                    if (i % COLUMNNBNOTES == 0)
+                    {
+                        notesGrid.RowDefinitions.Add(new RowDefinition());
+                    }
+
+                    Grid.SetRow(noteStackPanel, (int)i / COLUMNNBNOTES);
+                    Grid.SetColumn(noteStackPanel, i % COLUMNNBNOTES);
+
+                    notesGrid.Children.Add(noteStackPanel);
+                    i++;
+
+                    //STYLE
+                    noteIcon.Margin = new Thickness(4);
+                    noteStackPanel.Margin = new Thickness(20);
+                    noteNameTextBlock.Foreground = Brushes.WhiteSmoke;
+
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+
+        }
+
+        public void noteView_Click(object sender, RoutedEventArgs e)
+        {
+            string noteName = null;
+            var noteStackPanel = sender as StackPanel;
+
+            if (noteStackPanel == null)
+            {
+                Console.WriteLine("Error : No stack panel for click event !");
+                return;
+            }
+
+            Console.WriteLine("Event sent on click on " + noteStackPanel.Name);
+
+            foreach (UIElement element in noteStackPanel.Children)
+            {
+                if (element is TextBlock)
+                {
+                    TextBlock textBlock = (TextBlock)element;
+                    noteName = textBlock.Text;
+                    break;
+                }
+            }
+
+            if (noteName == null)
+            {
+                Console.WriteLine("Error : Name of note file not found !");
+                return;
+            }
+
+            DateTime noteDate = DateTime.Parse(noteName.Substring(noteName.Length - 8, 2) + "/" + noteName.Substring(noteName.Length - 6, 2) + "/" + noteName.Substring(noteName.Length - 4, 4));
+
+            NotePage notePage = new NotePage(noteDate);
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(notePage);
+        }
+
+
     }
 }

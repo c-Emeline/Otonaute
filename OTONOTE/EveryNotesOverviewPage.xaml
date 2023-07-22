@@ -173,8 +173,8 @@
     </Page.Resources>
 
     <StackPanel>
-        <Button x:Name="backBtn" Content="Back" Click="goBackOnClick" Background="Black" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="14" Height="32" Width="56" FontFamily="Segoe UI Variable Display Semilight" BorderBrush="#00707070"/>
-        <StackPanel HorizontalAlignment="Center" Orientation="Vertical" Height="90" Margin="55,67,0,0" VerticalAlignment="Top" Width="656">
+        <Button x:Name="backBtn" Content="Back" Click="goBack_Click" Background="Black" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="14" Height="32" Width="56" FontFamily="Segoe UI Variable Display Semilight" BorderBrush="#00707070"/>
+        <StackPanel HorizontalAlignment="Center" Orientation="Vertical" Height="90" Margin="20,20,0,0" Width="695">
             <Grid x:Name="yearSelectionGrid" HorizontalAlignment="Left">
 
             </Grid>
@@ -182,9 +182,10 @@
 
             </Grid>
         </StackPanel>
-        <Grid x:Name="notesGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ScrollViewer>
+            <Grid x:Name="notesGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-        </Grid>
-
+            </Grid>
+        </ScrollViewer>
     </StackPanel>
 </Page>
